@@ -1,0 +1,17 @@
+{
+  // Node 24+ runs .ts files directly by stripping types, so tsc is only a type checker here.
+  "compilerOptions": {
+    "target": "ES2024",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "types": ["node"],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    // Rules that keep the code runnable by Node's type stripping:
+    "allowImportingTsExtensions": true, // import "./x.ts", like Node expects
+    "erasableSyntaxOnly": true, // no enums / namespaces / parameter properties
+    "verbatimModuleSyntax": true // type-only imports must say `import type`
+  },
+  "include": ["src", "test"]
+}

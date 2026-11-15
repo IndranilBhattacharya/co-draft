@@ -13,7 +13,7 @@ export default function LandingGreeting() {
         </div>
       </div>
       <div className="mt-auto text-xs">
-        © 2025 Indranil Bhattacharya. All Rights Reserved.
+        © {new Date().getFullYear()} Indranil Bhattacharya. All Rights Reserved.
       </div>
     </div>
   );

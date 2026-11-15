@@ -1,0 +1,12 @@
+# Code generation for proto/ — run with `npm run gen:proto`.
+version: v2
+inputs:
+  - directory: proto
+plugins:
+  - local: protoc-gen-es
+    out: client/src/gen
+    opt: target=ts
+  - local: protoc-gen-es
+    out: server/src/gen
+    # Node runs .ts files directly, so generated imports must end in .ts
+    opt: [target=ts, import_extension=ts]

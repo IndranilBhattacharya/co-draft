@@ -1,0 +1,18 @@
+// The contract shared by client and server. `npm run gen:proto` turns this
+// file into typed TypeScript for both sides (client/src/gen, server/src/gen).
+syntax = "proto3";
+
+package codraft.v1;
+
+service TitleService {
+  // Unary RPC: one request in, one response out.
+  rpc SuggestTitle(SuggestTitleRequest) returns (SuggestTitleResponse);
+}
+
+message SuggestTitleRequest {
+  string document_id = 1;
+}
+
+message SuggestTitleResponse {
+  string title = 1;
+}

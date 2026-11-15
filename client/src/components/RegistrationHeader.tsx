@@ -21,8 +21,8 @@ export default function RegistrationHeader() {
             </TooltipTrigger>
             <TooltipContent>
               <p>
-                You're automatically verified via device fingerprint. All that's
-                left is personalization.
+                No passwords. Your session lives in a secure cookie on this
+                device. All that's left is personalization.
               </p>
             </TooltipContent>
           </Tooltip>

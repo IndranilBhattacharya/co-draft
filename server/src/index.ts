@@ -1,3 +1,5 @@
+// Entry point: builds the Express app, plugs in every protocol, connects to MongoDB and starts listening.
+// Middleware runs top to bottom for every request, so the order below matters.
 import { createServer } from "node:http";
 import { expressConnectMiddleware } from "@connectrpc/connect-express";
 import cors from "cors";
@@ -9,10 +11,10 @@ import { ZodError } from "zod";
 
 import { authRouter, requireAuth } from "./auth.ts";
 import { attachCollab } from "./collab.ts";
-import { documentsRouter } from "./documents.ts";
 import { env } from "./env.ts";
 import { yoga } from "./graphql.ts";
 import rpcRoutes from "./rpc.ts";
+import { summaryStream } from "./summary.ts";
 
 const app = express();
 
@@ -39,17 +41,13 @@ app.use(expressConnectMiddleware({ routes: rpcRoutes }));
 app.use(yoga.graphqlEndpoint, requireAuth, (req, res) => yoga(req, res)); // POST /graphql
 
 app.use(express.json({ limit: "100kb" }));
-app.use("/api/auth", authRouter);
-app.use("/api/documents", requireAuth, documentsRouter);
+app.use("/api/auth", authRouter); // REST
+app.get("/api/documents/:id/summary", requireAuth, summaryStream); // Server-Sent Events
 
 // Express 5 forwards errors thrown in async handlers here.
 const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
   if (err instanceof ZodError) {
     res.status(400).json({ error: err.issues[0]?.message ?? "Invalid input" });
-    return;
-  }
-  if (err instanceof mongoose.Error.CastError) {
-    res.status(404).json({ error: "Not found" });
     return;
   }
   console.error(err);

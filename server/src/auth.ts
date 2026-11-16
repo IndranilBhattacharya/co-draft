@@ -1,3 +1,6 @@
+// Sign up, "who am I" and sign out (REST), plus the helpers that check the session cookie.
+// There is no password: signing up creates a user and gives this browser a signed cookie.
+// Later requests prove who they are by sending that cookie back.
 import { Router, type CookieOptions, type RequestHandler } from "express";
 import { rateLimit } from "express-rate-limit";
 import { parseCookie } from "cookie";

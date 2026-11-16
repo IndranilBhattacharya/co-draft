@@ -2,7 +2,7 @@
 // and reconnects by itself. Ideal when only the server talks (here: live summaries).
 import { useEffect, useState } from "react";
 
-import { API_URL } from "@/lib/api";
+import { API_URL } from "@/lib/rest";
 
 export function useSummary(docId: string) {
   const [summary, setSummary] = useState("");

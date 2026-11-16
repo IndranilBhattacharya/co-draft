@@ -1,8 +1,10 @@
-// WebSocket (Socket.IO): the two-way, low-latency channel for live editing.
+// WebSocket (Socket.IO): the always-open, two-way connection used for live editing.
 //
-// Content is a Yjs CRDT document. Every client keeps a copy; edits travel as small
-// binary "updates" that merge in any order without conflicts. The server keeps one
-// copy per open document ("room"), relays updates, and saves to MongoDB.
+// The document content is a Yjs document. Every browser keeps its own copy, and each
+// edit is sent as a small binary "update". Yjs is built so updates can arrive in any
+// order and still end up with the same result on every screen, so two people typing
+// at once never overwrite each other. The server keeps one copy per open document
+// (a "room"), forwards updates to everyone else in the room, and saves to MongoDB.
 import type { Server as HttpServer } from "node:http";
 import { Server } from "socket.io";
 import * as Y from "yjs";
@@ -39,7 +41,8 @@ interface SocketData {
 type Room = { ydoc: Y.Doc; awareness: Awareness; text: string; saveTimer?: NodeJS.Timeout };
 
 const COLORS = ["#f87171", "#fb923c", "#facc15", "#4ade80", "#22d3ee", "#60a5fa", "#a78bfa", "#f472b6"];
-// Promise in the map so two people opening the same doc at once share one load.
+// We store the loading Promise, not the room itself, so two people opening the same
+// document at the same moment wait for one database load instead of starting two.
 const rooms = new Map<string, Promise<Room>>();
 let io: Server<ClientToServer, ServerToClient, object, SocketData>;
 
@@ -80,7 +83,7 @@ async function loadRoom(docId: string): Promise<Room> {
   awareness.setLocalState(null); // the server is not a participant
   const room: Room = { ydoc, awareness, text: doc?.text ?? "" };
 
-  // Origin = id of the socket that sent the change. Relay to everyone else in the room.
+  // "origin" is the id of the socket that made the change. Send it to everyone else in the room.
   const roomExcept = (origin: unknown) =>
     typeof origin === "string" ? io.to(docId).except(origin) : io.to(docId);
 
@@ -175,7 +178,8 @@ export function attachCollab(httpServer: HttpServer) {
       }
     });
 
-    // volatile = fire-and-forget: if the network is busy, dropping a mouse position is fine.
+    // volatile: if the connection is busy, drop this mouse position instead of queueing it.
+    // A newer one is coming a few milliseconds later anyway.
     socket.on("pointer", (pos) => {
       if (pos !== null && !isPoint(pos)) return;
       socket.volatile.to(docId).emit("pointer", { id: socket.id, name: user.name, color: socket.data.color, pos });
@@ -195,7 +199,8 @@ export function attachCollab(httpServer: HttpServer) {
       }
     });
 
-    // Sync step: send our full state + state vector; the client answers with what we're missing.
+    // First sync: send the full document plus a "state vector" (a summary of what we have).
+    // The client replies with any edits we don't have yet, e.g. typed while it was offline.
     socket.emit("init", {
       update: Y.encodeStateAsUpdate(room.ydoc),
       stateVector: Y.encodeStateVector(room.ydoc),

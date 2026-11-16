@@ -1,6 +1,6 @@
 import { createFileRoute, redirect } from "@tanstack/react-router";
 
-import { meQuery } from "@/lib/api";
+import { meQuery } from "@/lib/rest";
 
 // Pathless layout route ("_" prefix): guards every route inside src/routes/_authed/.
 export const Route = createFileRoute("/_authed")({

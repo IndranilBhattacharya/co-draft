@@ -1,3 +1,4 @@
+// App entry: creates the data cache and the router, then renders the app into index.html.
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";

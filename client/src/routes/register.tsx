@@ -1,3 +1,5 @@
+// /register: pick an avatar and a name, and you're in. The server answers by setting
+// the session cookie, so there is nothing to store on our side.
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
@@ -11,7 +13,7 @@ import RegistrationHeader from "@/components/RegistrationHeader";
 import { BackgroundBeams } from "@/components/ui/BackgroundBeams";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { api, meQuery } from "@/lib/api";
+import { auth, meQuery } from "@/lib/rest";
 
 const formSchema = z.object({
   avatar: z.string().min(1, "Avatar is required"),
@@ -51,7 +53,7 @@ function RegisterPage() {
   const avatar = useWatch({ control, name: "avatar" });
 
   const signUp = useMutation({
-    mutationFn: api.register,
+    mutationFn: auth.register,
     onSuccess: (user) => {
       queryClient.setQueryData(meQuery.queryKey, user); // skip a refetch of /me
       void navigate({ href: next ?? "/" });

@@ -1,8 +1,10 @@
+// Right column of the editor: who is here right now (from the WebSocket),
+// the live summary (from Server-Sent Events) and the document details (from GraphQL).
 import type { ReactNode } from "react";
 
 import { Avatar } from "@/components/Avatar";
 import { useSummary } from "@/hooks/useSummary";
-import type { DocumentDetail } from "@/lib/api";
+import type { DocumentDetail } from "@/lib/graphql";
 import { formatDate, formatTime } from "@/lib/utils";
 import { useRoom } from "@/store/room";
 

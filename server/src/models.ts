@@ -1,3 +1,4 @@
+// MongoDB collections, defined with Mongoose schemas, plus the one rule for who can open a document.
 import { Schema, model, isValidObjectId, type HydratedDocument, type InferSchemaType } from "mongoose";
 
 const userSchema = new Schema(

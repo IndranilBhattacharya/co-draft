@@ -1,13 +1,15 @@
+// / : the home page. Lists your drafts and the ones shared with you, with search,
+// tabs, and a button to start a new draft.
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { ArrowUp, Sparkles } from "lucide-react";
-import { useState, type FormEvent } from "react";
+import { FileText, Plus } from "lucide-react";
+import { useState } from "react";
 import { z } from "zod";
 
 import { DocumentCard } from "@/components/DocumentCard";
 import { Sidebar, TABS } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
-import { api, documentsQuery } from "@/lib/api";
+import { documents, documentsQuery } from "@/lib/graphql";
 
 export const Route = createFileRoute("/_authed/")({
   // The active tab lives in the URL (?tab=shared): shareable, survives refresh, back button works.
@@ -26,28 +28,35 @@ function HomePage() {
   const query = search.trim().toLowerCase();
   const visible = docs.filter(
     (doc) =>
-      (tab === "recent" || (tab === "mine") === (doc.role === "owner")) &&
+      (tab === "recent" || (tab === "mine") === (doc.role === "OWNER")) &&
       (doc.title.toLowerCase().includes(query) || doc.preview.toLowerCase().includes(query)),
   );
+
+  let emptyText = "No drafts yet. Create one to get started.";
+  if (tab === "shared") emptyText = "Nothing shared with you right now.";
+  if (query) emptyText = "No drafts match your search.";
 
   return (
     <div className="flex h-screen">
       <Sidebar user={user} search={search} onSearch={setSearch} />
 
-      <main className="flex-1 overflow-y-auto">
-        <header className="flex h-14 items-center border-b px-6 text-sm font-medium">
-          {TABS.find((t) => t.tab === tab)?.label}
+      <main className="flex min-w-0 flex-1 flex-col">
+        {/* Same height as the sidebar's top row, so the two borders line up. */}
+        <header className="flex h-14 shrink-0 items-center justify-between border-b px-8">
+          <h1 className="text-sm font-medium">{TABS.find((t) => t.tab === tab)?.label}</h1>
+          <NewDraftButton />
         </header>
 
-        <div className="p-6">
-          <NewDraft />
-
+        <div className="flex-1 overflow-y-auto px-8 py-6">
           {visible.length === 0 ? (
-            <p className="mt-16 text-center text-sm text-muted-foreground">
-              {tab === "shared" ? "Nothing shared with you right now." : "No drafts yet. Start one above."}
-            </p>
+            <div className="flex flex-col items-center gap-3 py-24 text-center">
+              <span className="rounded-full bg-muted p-3">
+                <FileText className="size-5 text-muted-foreground" />
+              </span>
+              <p className="text-sm text-muted-foreground">{emptyText}</p>
+            </div>
           ) : (
-            <div className="mt-8 grid grid-cols-[repeat(auto-fill,minmax(16rem,1fr))] gap-5">
+            <div className="grid grid-cols-[repeat(auto-fill,minmax(15rem,1fr))] gap-x-5 gap-y-8">
               {visible.map((doc) => (
                 <DocumentCard key={doc.id} doc={doc} />
               ))}
@@ -59,35 +68,17 @@ function HomePage() {
   );
 }
 
-function NewDraft() {
+// Creates an empty draft ("Untitled") and opens it. The title is edited inside the editor.
+function NewDraftButton() {
   const navigate = useNavigate();
   const create = useMutation({
-    mutationFn: api.createDocument,
+    mutationFn: () => documents.create(""),
     onSuccess: ({ id }) => void navigate({ to: "/documents/$id", params: { id } }),
   });
 
-  const onSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    create.mutate(String(new FormData(event.currentTarget).get("title") ?? ""));
-  };
-
   return (
-    <section className="rounded-xl border bg-card/40 p-5">
-      <h2 className="flex items-center gap-2 text-lg font-semibold">
-        Start a draft and bring people in <Sparkles className="size-4 text-muted-foreground" />
-      </h2>
-      <form onSubmit={onSubmit} className="mt-3 flex items-center gap-2 rounded-lg border bg-background/60 p-1.5 pl-3">
-        <input
-          name="title"
-          maxLength={120}
-          aria-label="Draft title"
-          placeholder="Name it, or leave it blank and pick a title once you've written something"
-          className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-        />
-        <Button size="sm" disabled={create.isPending}>
-          Create draft <ArrowUp />
-        </Button>
-      </form>
-    </section>
+    <Button size="sm" onClick={() => create.mutate()} disabled={create.isPending}>
+      <Plus /> New draft
+    </Button>
   );
 }

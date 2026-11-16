@@ -1,10 +1,12 @@
-// gRPC client. The typed `TitleService` comes from proto/codraft/v1/title.proto (npm run gen:proto).
-// Connect speaks a browser-friendly flavor of gRPC over plain fetch.
+// gRPC client for the "Suggest title" button.
+// `TitleService` is generated from proto/codraft/v1/title.proto by `npm run gen:proto`,
+// so the client and server can't disagree about the request and response shapes.
+// Browsers can't speak raw gRPC, so Connect sends the same calls over normal fetch.
 import { createClient } from "@connectrpc/connect";
 import { createConnectTransport } from "@connectrpc/connect-web";
 
 import { TitleService } from "@/gen/codraft/v1/title_pb";
-import { API_URL } from "@/lib/api";
+import { API_URL } from "@/lib/rest";
 
 const transport = createConnectTransport({
   baseUrl: API_URL,

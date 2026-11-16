@@ -1,28 +1,32 @@
+// One draft on the home page: a mini page preview, title, last edit time,
+// the owner's avatar if it was shared with you, and a delete button for your own drafts.
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { FileText, Trash2 } from "lucide-react";
 
-import { api, documentsQuery, type DocumentItem } from "@/lib/api";
+import { Avatar } from "@/components/Avatar";
+import { documents, documentsQuery, type DocumentItem } from "@/lib/graphql";
 import { timeAgo } from "@/lib/utils";
 
 export function DocumentCard({ doc }: Readonly<{ doc: DocumentItem }>) {
   const queryClient = useQueryClient();
   const remove = useMutation({
-    mutationFn: () => api.deleteDocument(doc.id),
+    mutationFn: () => documents.remove(doc.id),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: documentsQuery.queryKey }),
   });
 
   return (
-    <div className="group relative overflow-hidden rounded-xl border bg-card/40 transition-colors hover:border-foreground/25">
+    <div className="group relative">
       <Link to="/documents/$id" params={{ id: doc.id }} className="block">
-        {/* Thumbnail: a tiny white page with the first lines of text */}
-        <div className="flex h-40 justify-center overflow-hidden bg-neutral-900 pt-5">
-          <div className="w-32 rounded-sm bg-white p-2.5 text-[5px] leading-[7px] whitespace-pre-line text-neutral-700 shadow-lg">
+        {/* Thumbnail: the top of a white page, cropped by the rounded frame */}
+        <div className="aspect-4/3 overflow-hidden rounded-lg border bg-neutral-900 transition-colors group-hover:border-foreground/30">
+          <div className="mx-auto mt-6 h-full w-[58%] rounded-t-sm bg-white p-3 text-[5px] leading-[7px] whitespace-pre-line text-neutral-700 shadow-lg">
             <p className="mb-1 text-[7px] font-semibold text-black">{doc.title}</p>
             {doc.preview}
           </div>
         </div>
-        <div className="flex items-center gap-3 border-t p-3">
+
+        <div className="mt-3 flex items-center gap-2.5 px-0.5">
           <span className="rounded bg-sky-500 p-1 text-white">
             <FileText className="size-3.5" />
           </span>
@@ -30,13 +34,16 @@ export function DocumentCard({ doc }: Readonly<{ doc: DocumentItem }>) {
             <p className="truncate text-sm font-medium">{doc.title}</p>
             <p className="text-xs text-muted-foreground">Edited {timeAgo(doc.updatedAt)}</p>
           </div>
-          {doc.role === "guest" && (
-            <span className="rounded-full bg-accent px-2 py-0.5 text-[10px] text-muted-foreground">Shared</span>
+          {doc.role === "GUEST" && (
+            <span title={`Shared by ${doc.owner.name}`} className="shrink-0">
+              <Avatar seed={doc.owner.avatar} className="size-6" />
+            </span>
           )}
         </div>
       </Link>
 
-      {doc.role === "owner" && (
+      {/* Outside the Link so clicking it doesn't open the draft. Only the owner can delete. */}
+      {doc.role === "OWNER" && (
         <button
           type="button"
           aria-label={`Delete ${doc.title}`}

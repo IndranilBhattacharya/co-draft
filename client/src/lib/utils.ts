@@ -1,6 +1,7 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 
+/** Joins Tailwind class names and lets later classes win over earlier ones. */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -15,7 +16,7 @@ const UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
   ["minute", 60],
 ];
 
-/** "5 minutes ago", "yesterday" — no date library needed. */
+/** Turns a date into "5 minutes ago" or "yesterday" using the browser's built-in Intl API. */
 export function timeAgo(date: string) {
   const seconds = (new Date(date).getTime() - Date.now()) / 1000;
   const match = UNITS.find(([, size]) => Math.abs(seconds) >= size);

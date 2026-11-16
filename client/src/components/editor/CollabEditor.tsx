@@ -1,3 +1,6 @@
+// The rich text editor (Tiptap). The Collaboration extension stores the text in the shared
+// Yjs document, and CollaborationCaret draws other people's cursors in their colors.
+// This component also sends our mouse position and draws everyone else's pointer.
 import Collaboration from "@tiptap/extension-collaboration";
 import CollaborationCaret from "@tiptap/extension-collaboration-caret";
 import { Placeholder } from "@tiptap/extensions";

@@ -1,3 +1,5 @@
+// The root route wraps every page. It also sets what to show for unknown URLs and
+// unexpected errors. `queryClient` in the context lets every loader use the data cache.
 import type { QueryClient } from "@tanstack/react-query";
 import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 

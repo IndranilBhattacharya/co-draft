@@ -1,13 +1,15 @@
+// Top bar of the editor: back button, shared title, "Suggest title" (gRPC),
+// connection status, and the owner's share controls (GraphQL mutations).
 import { ConnectError } from "@connectrpc/connect";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { ArrowLeft, Copy, Link2, Sparkles } from "lucide-react";
+import { ArrowLeft, Copy, Link2, Type } from "lucide-react";
 import { useState } from "react";
 import type * as Y from "yjs";
 
 import { Button } from "@/components/ui/button";
 import { useSharedTitle } from "@/hooks/useCollab";
-import { api, documentQuery, type DocumentDetail } from "@/lib/api";
+import { documentQuery, documents, type DocumentDetail } from "@/lib/graphql";
 import { titles } from "@/lib/rpc";
 import { cn, formatTime } from "@/lib/utils";
 import { useRoom, type Status } from "@/store/room";
@@ -44,7 +46,7 @@ export function EditorHeader({ doc, ydoc }: Readonly<{ doc: DocumentDetail; ydoc
 
       {suggestError && <span className="text-xs text-red-400">{suggestError}</span>}
       <Button variant="ghost" size="sm" onClick={() => suggest.mutate()} disabled={suggest.isPending}>
-        <Sparkles /> Suggest title
+        <Type /> Suggest title
       </Button>
 
       <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -68,13 +70,13 @@ function ShareControls({ doc }: Readonly<{ doc: DocumentDetail }>) {
   };
 
   const start = useMutation({
-    mutationFn: () => api.startShare(doc.id),
+    mutationFn: () => documents.startShare(doc.id),
     onSuccess: async ({ token }) => {
       await refresh();
       await copy(token).catch(() => {}); // clipboard may need a fresh click; the Copy button covers it
     },
   });
-  const end = useMutation({ mutationFn: () => api.endShare(doc.id), onSuccess: refresh });
+  const end = useMutation({ mutationFn: () => documents.endShare(doc.id), onSuccess: refresh });
 
   const token = doc.share?.token;
   if (!doc.share || !token) {

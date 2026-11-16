@@ -1,5 +1,6 @@
-// Free, offline text helpers: no AI model, no API key, no extra memory.
-// ponytail: extractive (picks existing sentences). Plug an LLM in here if you ever want generated prose.
+// Small text helpers used for the "Suggest title" button and the live summary.
+// They don't write new sentences; they pick the most useful ones already in the draft.
+// That keeps them free, instant and offline.
 
 const STOP_WORDS = new Set(
   "a an and are as at be but by for from has have i in is it its of on or that the this to was we were will with you".split(" "),
@@ -8,18 +9,20 @@ const STOP_WORDS = new Set(
 const words = (text: string) =>
   (text.toLowerCase().match(/[\p{L}\p{N}']+/gu) ?? []).filter((word) => !STOP_WORDS.has(word));
 
-/** Cuts at a word boundary so titles and previews never end mid-word. */
-export function clip(text: string, max: number) {
+/** Shortens text to `max` characters without cutting a word in half. */
+function clip(text: string, max: number) {
   const clean = text.replace(/\s+/g, " ").trim();
   return clean.length <= max ? clean : `${clean.slice(0, max).replace(/\s+\S*$/, "")}…`;
 }
 
-/** The first non-empty line is almost always what a document is about. */
+/** The first line that has text in it usually says what the draft is about. */
 export const suggestTitle = (text: string) => clip(text.split("\n").find((line) => line.trim()) ?? "Untitled", 60);
 
 /**
- * Classic extractive summary: words that repeat across the document are its topic,
- * so the sentences richest in those words make the best summary. Kept in original order.
+ * Picks the most important sentences of the draft.
+ * Idea: words the author repeats a lot are what the draft is about. So we count every
+ * word (skipping filler like "the" and "and"), give each sentence the average count of
+ * its words, keep the top few, and put them back in their original order.
  */
 export function summarize(text: string, sentenceCount = 3) {
   const sentences = (text.match(/[^.!?\n]+[.!?]*/g) ?? []).map((s) => s.trim()).filter(Boolean);

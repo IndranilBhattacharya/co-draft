@@ -1,3 +1,5 @@
+// /documents/<id>: the editor page. Loads the document details first, then opens
+// the live connection and shows the header, the editor and the side panel.
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -6,7 +8,7 @@ import { EditorHeader } from "@/components/editor/EditorHeader";
 import { SidePanel } from "@/components/editor/SidePanel";
 import { Message } from "@/components/Message";
 import { useCollab } from "@/hooks/useCollab";
-import { documentQuery } from "@/lib/api";
+import { documentQuery } from "@/lib/graphql";
 import { useRoom } from "@/store/room";
 
 export const Route = createFileRoute("/_authed/documents/$id")({

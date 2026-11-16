@@ -4,7 +4,7 @@ import { io, type Socket } from "socket.io-client";
 import { Awareness, applyAwarenessUpdate, encodeAwarenessUpdate } from "y-protocols/awareness";
 import * as Y from "yjs";
 
-import { API_URL } from "@/lib/api";
+import { API_URL } from "@/lib/rest";
 import { initialRoom, useRoom, type Person } from "@/store/room";
 
 // Mirrors the typed events in server/src/collab.ts.

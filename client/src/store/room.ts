@@ -1,11 +1,11 @@
-// Zustand: client state that isn't in the database. Here it's the live room —
-// who's here, where their mouse is, connection status. It changes many times a
-// second and is read by components far apart (header, editor, side panel), so a
-// tiny global store with selectors beats prop drilling or React context re-renders.
+// Zustand store for the live room: who is here, where their mouse is, and whether
+// we are connected. None of this is saved in the database, so it doesn't belong in
+// TanStack Query. It changes many times a second and is read by the header, the
+// editor and the side panel, so a small global store is simpler than passing props down.
 import { create } from "zustand";
 
 export type Person = { id: string; name: string; avatar: string; color: string };
-export type Pointer = { id: string; name: string; color: string; x: number; y: number };
+type Pointer = { id: string; name: string; color: string; x: number; y: number };
 export type Status = "connecting" | "live" | "offline" | "ended";
 
 type RoomState = {

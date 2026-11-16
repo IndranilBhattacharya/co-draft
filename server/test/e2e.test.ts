@@ -85,18 +85,18 @@ function joinRoom(cookie: string, docId: string) {
   return { ydoc, socket, state };
 }
 
-// --- GraphQL helper: one POST, the query says which fields come back -----
-async function documentById(cookie: string, id: string) {
+// --- GraphQL helper: always one POST; the query says which fields come back --
+async function gql(cookie: string, query: string, variables: object = {}) {
   const res = await fetch(`${API}/graphql`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Origin: ORIGIN, Cookie: cookie },
-    body: JSON.stringify({
-      query: "query ($id: ID!) { document(id: $id) { role owner { name } share { token } } }",
-      variables: { id },
-    }),
+    body: JSON.stringify({ query, variables }),
   });
-  return (await res.json()).data.document;
+  const { data, errors } = await res.json();
+  return { data, error: errors?.[0]?.message as string | undefined };
 }
+
+const DOCUMENT = "query ($id: ID!) { document(id: $id) { role owner { name } share { token } } }";
 
 const textOf = (ydoc: Y.Doc) => ydoc.getXmlFragment("content").toString();
 
@@ -107,21 +107,32 @@ test("REST + GraphQL + WebSocket + gRPC + SSE", async () => {
   // REST: auth and CSRF guards
   assert.equal((await rest("", "/auth/me")).status, 401);
   assert.equal((await rest(alice, "/auth/me")).status, 200);
-  const badOrigin = await fetch(`${API}/api/documents`, {
+  const badOrigin = await fetch(`${API}/graphql`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Origin: "https://evil.example", Cookie: alice },
   });
   assert.equal(badOrigin.status, 403);
 
-  // REST: create, then share with Bob
-  const { id } = await (await rest(alice, "/documents", { method: "POST", body: "{}" })).json();
-  assert.equal(await documentById(bob, id), null, "not shared yet");
-  const { token } = await (await rest(alice, `/documents/${id}/share`, { method: "POST" })).json();
-  assert.equal((await (await rest(bob, `/documents/join/${token}`, { method: "POST" })).json()).id, id);
+  // GraphQL mutations: create, then share with Bob
+  const { data: created } = await gql(alice, `mutation { createDocument(title: "Notes") { id } }`);
+  const id: string = created.createDocument.id;
+  assert.equal((await gql(bob, DOCUMENT, { id })).data.document, null, "not shared yet");
+  assert.equal((await gql(bob, `mutation ($id: ID!) { deleteDocument(id: $id) }`, { id })).error, "Document not found");
 
-  // GraphQL: nested owner resolved; the token is hidden from guests
-  assert.deepEqual(await documentById(bob, id), { role: "GUEST", owner: { name: "Alice" }, share: { token: null } });
-  assert.equal((await documentById(alice, id)).share.token, token);
+  const { data: shared } = await gql(alice, `mutation ($id: ID!) { startShare(id: $id) { token } }`, { id });
+  const token: string = shared.startShare.token;
+  const { data: joined } = await gql(bob, `mutation ($token: String!) { joinDocument(token: $token) { id } }`, { token });
+  assert.equal(joined.joinDocument.id, id);
+
+  // GraphQL queries: nested owner resolved; the token is hidden from guests
+  assert.deepEqual((await gql(bob, DOCUMENT, { id })).data.document, {
+    role: "GUEST",
+    owner: { name: "Alice" },
+    share: { token: null },
+  });
+  assert.equal((await gql(alice, DOCUMENT, { id })).data.document.share.token, token);
+  const { data: list } = await gql(bob, "{ documents { title owner { name } } }");
+  assert.deepEqual(list.documents, [{ title: "Notes", owner: { name: "Alice" } }]);
 
   // SSE: Alice listens for summaries
   const sse = await fetch(`${API}/api/documents/${id}/summary`, { headers: { Cookie: alice } });
@@ -151,9 +162,9 @@ test("REST + GraphQL + WebSocket + gRPC + SSE", async () => {
   await waitFor(() => events.includes("event: summary") && events.includes("Weekly sync"), 20_000);
 
   // Ending the session kicks the guest and revokes access
-  assert.equal((await rest(alice, `/documents/${id}/share`, { method: "DELETE" })).status, 204);
+  assert.equal((await gql(alice, `mutation ($id: ID!) { endShare(id: $id) }`, { id })).data.endShare, true);
   await waitFor(() => b.state.ended);
-  assert.equal(await documentById(bob, id), null);
+  assert.equal((await gql(bob, DOCUMENT, { id })).data.document, null);
   assert.equal(a.socket.connected, true, "owner stays");
 
   a.socket.disconnect();

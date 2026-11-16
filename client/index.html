@@ -2,11 +2,58 @@
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
+    <title>CoDraft — Real-Time Collaborative Document Editor</title>
+
+    <!-- Primary Meta Tags -->
+    <meta name="title" content="CoDraft — Real-Time Collaborative Document Editor" />
+    <meta
+      name="description"
+      content="Instant collaboration. No clutter. Just draft and go. CoDraft is a high-performance, real-time collaborative document editor with live presence, markdown syntax, and vector PDF export."
+    />
+    <meta name="keywords" content="collaborative editor, realtime drafting, markdown, tiptap, yjs, codraft, document sharing" />
+    <meta name="author" content="Indranil Bhattacharya" />
+    <meta name="robots" content="index, follow" />
+    <meta name="format-detection" content="telephone=no" />
+
+    <!-- Theme & Mobile Web App -->
+    <meta name="theme-color" content="#09090b" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="CoDraft" />
+    <meta name="application-name" content="CoDraft" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="CoDraft" />
+    <meta property="og:title" content="CoDraft — Real-Time Collaborative Document Editor" />
+    <meta
+      property="og:description"
+      content="Instant collaboration. No clutter. Just draft and go. Real-time collaborative drafting with live presence, markdown rules, and clean vector PDF export."
+    />
+    <meta property="og:image" content="/og-image.svg" />
+    <meta property="og:image:type" content="image/svg+xml" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="CoDraft collaborative document editor interface" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="CoDraft — Real-Time Collaborative Document Editor" />
+    <meta
+      name="twitter:description"
+      content="Instant collaboration. No clutter. Just draft and go. Real-time collaborative drafting with live presence, markdown rules, and clean vector PDF export."
+    />
+    <meta name="twitter:image" content="/og-image.svg" />
+    <meta name="twitter:image:alt" content="CoDraft collaborative document editor interface" />
+
+    <!-- Favicons & Manifest -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CoDraft</title>
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
   </head>
-  <body>
+  <body class="bg-background text-foreground antialiased selection:bg-primary/20 selection:text-primary">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

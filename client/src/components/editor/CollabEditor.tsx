@@ -78,14 +78,14 @@ export function CollabEditor({ ydoc, awareness, userName, sendPointer }: Readonl
       <div
         onPointerMove={onPointerMove}
         onPointerLeave={() => sendPointer(null)}
-        className="editor-canvas-container relative mx-auto my-6 max-w-4xl rounded-2xl border border-border/60 bg-card/40 backdrop-blur-md shadow-2xl transition-all"
+        className="editor-canvas-container relative mx-auto my-3 sm:my-6 w-full max-w-4xl rounded-xl sm:rounded-2xl border border-border/60 bg-card/40 backdrop-blur-md shadow-2xl transition-all overflow-hidden"
       >
         {/* Document Title for PDF Print view only */}
         <h1 className="print-document-title hidden">{title || "Untitled Draft"}</h1>
 
         {/* Minimal Figma-style Editor Formatting Toolbar */}
         {editor && (
-          <div className="no-print flex flex-wrap items-center justify-between gap-1 border-b border-border/40 bg-muted/20 px-4 py-2 select-none">
+          <div className="no-print flex flex-wrap items-center justify-between gap-1 border-b border-border/40 bg-muted/20 px-2 sm:px-4 py-1.5 sm:py-2 select-none overflow-x-auto">
             <div className="flex flex-wrap items-center gap-0.5">
               <ToolbarButton
                 active={editor.isActive("bold")}
@@ -193,7 +193,7 @@ export function CollabEditor({ ydoc, awareness, userName, sendPointer }: Readonl
           </div>
         )}
 
-        <div className="px-8 py-8 md:px-14 md:py-12">
+        <div className="px-4 py-6 sm:px-8 sm:py-8 md:px-14 md:py-12 min-w-0 break-words [overflow-wrap:anywhere]">
           <EditorContent editor={editor} />
         </div>
         <RemotePointers />

@@ -121,21 +121,41 @@
 
 /* ---- Editor content (Tiptap renders plain HTML tags) ---- */
 .tiptap-content {
-  @apply text-[15px] leading-7;
+  @apply text-[15px] leading-relaxed text-foreground/90 font-normal outline-none;
 }
-.tiptap-content h1 { @apply mt-6 mb-3 text-3xl font-bold; }
-.tiptap-content h2 { @apply mt-5 mb-2 text-2xl font-semibold; }
-.tiptap-content h3 { @apply mt-4 mb-2 text-xl font-semibold; }
-.tiptap-content p { @apply my-2; }
-.tiptap-content ul { @apply my-2 list-disc pl-6; }
-.tiptap-content ol { @apply my-2 list-decimal pl-6; }
-.tiptap-content blockquote { @apply my-3 border-l-2 border-muted-foreground/40 pl-4 text-muted-foreground; }
-.tiptap-content code { @apply rounded bg-muted px-1 py-0.5 font-mono text-sm; }
-.tiptap-content pre { @apply my-3 overflow-x-auto rounded-lg bg-muted p-4; }
-.tiptap-content hr { @apply my-6; }
+.tiptap-content h1 {
+  @apply mt-8 mb-4 text-3xl font-bold tracking-tight text-foreground pb-2 border-b border-border/40;
+}
+.tiptap-content h2 {
+  @apply mt-6 mb-3 text-2xl font-semibold tracking-tight text-foreground;
+}
+.tiptap-content h3 {
+  @apply mt-5 mb-2 text-xl font-semibold tracking-tight text-foreground/90;
+}
+.tiptap-content p {
+  @apply my-2.5 leading-7;
+}
+.tiptap-content ul {
+  @apply my-3 list-disc pl-6 space-y-1.5;
+}
+.tiptap-content ol {
+  @apply my-3 list-decimal pl-6 space-y-1.5;
+}
+.tiptap-content blockquote {
+  @apply my-4 border-l-2 border-primary/60 pl-4 py-1 italic text-muted-foreground bg-accent/20 rounded-r-lg;
+}
+.tiptap-content code {
+  @apply rounded-md bg-muted px-1.5 py-0.5 font-mono text-[13px] text-primary font-medium border border-border/50;
+}
+.tiptap-content pre {
+  @apply my-4 overflow-x-auto rounded-xl bg-muted/80 p-4 font-mono text-sm leading-relaxed border border-border/60;
+}
+.tiptap-content hr {
+  @apply my-6 border-border/60;
+}
 .tiptap-content p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
-  @apply pointer-events-none float-left h-0 text-muted-foreground;
+  @apply pointer-events-none float-left h-0 text-muted-foreground/60 italic;
 }
 
 /* ---- Other people's carets (CollaborationCaret sets the color inline) ---- */
@@ -144,5 +164,121 @@
   word-break: normal;
 }
 .collaboration-carets__label {
-  @apply absolute -top-5 -left-px rounded rounded-bl-none px-1.5 py-0.5 text-[10px] leading-none font-semibold whitespace-nowrap text-black select-none;
+  @apply absolute -top-5 -left-px rounded-md px-1.5 py-0.5 text-[10px] leading-none font-semibold whitespace-nowrap text-black shadow-sm select-none;
+}
+
+/* ---- Print & PDF Export styles ---- */
+@media print {
+  @page {
+    margin: 20mm;
+    size: auto;
+  }
+
+  body, html, #root {
+    background: #ffffff !important;
+    color: #111827 !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Hide interactive chrome and sidebars */
+  header,
+  aside,
+  .no-print,
+  .print-hide {
+    display: none !important;
+  }
+
+  main {
+    overflow: visible !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    width: 100% !important;
+  }
+
+  .editor-canvas-container {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .print-document-title {
+    display: block !important;
+    font-size: 26pt !important;
+    font-weight: 800 !important;
+    color: #111827 !important;
+    margin-bottom: 20pt !important;
+    padding-bottom: 10pt !important;
+    border-bottom: 2pt solid #e5e7eb !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  .tiptap-content {
+    color: #1f2937 !important;
+    font-size: 11pt !important;
+    line-height: 1.65 !important;
+  }
+
+  .tiptap-content h1 {
+    font-size: 20pt !important;
+    color: #111827 !important;
+    border-bottom: 1pt solid #e5e7eb !important;
+    page-break-after: avoid;
+    margin-top: 18pt !important;
+    margin-bottom: 8pt !important;
+  }
+
+  .tiptap-content h2 {
+    font-size: 15pt !important;
+    color: #111827 !important;
+    page-break-after: avoid;
+    margin-top: 14pt !important;
+    margin-bottom: 6pt !important;
+  }
+
+  .tiptap-content h3 {
+    font-size: 12.5pt !important;
+    color: #111827 !important;
+    page-break-after: avoid;
+    margin-top: 12pt !important;
+    margin-bottom: 5pt !important;
+  }
+
+  .tiptap-content p {
+    margin-top: 6pt !important;
+    margin-bottom: 6pt !important;
+  }
+
+  .tiptap-content blockquote {
+    border-left: 2.5pt solid #9ca3af !important;
+    background: #f9fafb !important;
+    padding-left: 10pt !important;
+    color: #4b5563 !important;
+    font-style: italic !important;
+  }
+
+  .tiptap-content code {
+    background-color: #f3f4f6 !important;
+    color: #1f2937 !important;
+    border: 0.5pt solid #e5e7eb !important;
+    padding: 1pt 3pt !important;
+    font-size: 9.5pt !important;
+  }
+
+  .tiptap-content pre {
+    background-color: #f8fafc !important;
+    border: 1pt solid #e2e8f0 !important;
+    padding: 10pt !important;
+    border-radius: 4pt !important;
+    page-break-inside: avoid;
+  }
+
+  .tiptap-content hr {
+    border-color: #e5e7eb !important;
+    margin: 14pt 0 !important;
+  }
 }

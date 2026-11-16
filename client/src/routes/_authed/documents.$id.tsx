@@ -37,15 +37,18 @@ function DocumentRoom({ id }: Readonly<{ id: string }>) {
   }
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-screen flex-col bg-background text-foreground">
       <EditorHeader doc={doc} ydoc={ydoc} />
       <div className="flex min-h-0 flex-1">
-        <main className="flex-1 overflow-y-auto px-6">
+        <main className="flex-1 overflow-y-auto px-4 md:px-8 bg-background/50 relative">
           {/* Mount the editor once the first sync is done, so it starts with real content and a caret color. */}
           {color ? (
             <CollabEditor ydoc={ydoc} awareness={awareness} userName={user.name} sendPointer={sendPointer} />
           ) : (
-            <p className="mt-24 text-center text-sm text-muted-foreground">Connecting…</p>
+            <div className="mt-28 flex flex-col items-center justify-center gap-3">
+              <div className="size-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+              <p className="text-xs text-muted-foreground">Connecting to live draft…</p>
+            </div>
           )}
         </main>
         <SidePanel doc={doc} myId={user.id} />

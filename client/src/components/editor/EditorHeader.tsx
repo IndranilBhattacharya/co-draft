@@ -79,7 +79,7 @@ export function EditorHeader({ doc, ydoc, onToggleSidebar, isSidebarOpen }: Read
             placeholder="Untitled"
             aria-label="Title"
             maxLength={120}
-            className="min-w-0 w-full max-w-[140px] xs:max-w-[200px] sm:max-w-xs md:max-w-md flex-1 rounded-md bg-transparent px-1.5 sm:px-2 py-1 text-sm md:text-base font-semibold tracking-tight text-foreground placeholder:text-muted-foreground/50 outline-none transition-colors hover:bg-accent/40 focus:bg-accent/60 focus:ring-1 focus:ring-ring/40"
+            className="min-w-0 flex-1 max-w-xs sm:max-w-md md:max-w-xl lg:max-w-2xl rounded-md bg-transparent px-1.5 sm:px-2 py-1 text-sm md:text-base font-semibold tracking-tight text-foreground placeholder:text-muted-foreground/50 outline-none transition-colors hover:bg-accent/40 focus:bg-accent/60 focus:ring-1 focus:ring-ring/40"
           />
         </div>
       </div>
@@ -127,7 +127,7 @@ export function EditorHeader({ doc, ydoc, onToggleSidebar, isSidebarOpen }: Read
         {/* Live status badge */}
         <div
           className={cn(
-            "flex items-center gap-1.5 rounded-full border px-2 sm:px-2.5 py-1 text-xs font-medium transition-colors",
+            "hidden xs:flex items-center gap-1.5 rounded-full border px-2 sm:px-2.5 py-1 text-xs font-medium transition-colors",
             status.pill
           )}
         >
@@ -158,7 +158,7 @@ export function EditorHeader({ doc, ydoc, onToggleSidebar, isSidebarOpen }: Read
             onClick={onToggleSidebar}
             aria-label="Toggle panel"
             className={cn(
-              "relative flex size-8 shrink-0 items-center justify-center rounded-lg p-0 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground",
+              "relative flex lg:hidden size-8 shrink-0 items-center justify-center rounded-lg p-0 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground",
               isSidebarOpen && "bg-accent/80 text-foreground"
             )}
             title="Toggle details & presence panel"

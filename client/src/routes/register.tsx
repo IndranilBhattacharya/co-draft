@@ -61,29 +61,31 @@ function RegisterPage() {
   });
 
   return (
-    <main className="relative min-h-screen md:h-screen w-full overflow-y-auto md:overflow-hidden flex items-center justify-center p-4 sm:p-6 md:p-8">
+    <main className="relative min-h-dvh w-full overflow-y-auto md:overflow-hidden flex items-center justify-center p-4 sm:p-6 md:p-8">
       <BackgroundBeams />
-      <div className="z-10 relative md:absolute md:inset-y-[2.5vh] md:inset-x-[5vw] flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8 w-full max-w-7xl h-full">
+      <div className="z-10 relative flex flex-col md:flex-row items-center justify-center gap-6 sm:gap-8 md:gap-12 w-full max-w-6xl my-auto py-6 md:py-0">
         <LandingGreeting />
 
         <form
           onSubmit={handleSubmit((data) => signUp.mutate(data))}
-          className="p-6 sm:p-8 w-full md:w-1/2 h-auto md:h-full flex flex-col bg-foreground/5 rounded-2xl sm:rounded-3xl shadow-[0_4px_30px_rgba(0,0,0,0.1)] backdrop-blur-sm border-b border-white/10"
+          className="p-6 sm:p-8 md:p-10 w-full max-w-lg md:max-w-none md:w-1/2 flex flex-col bg-card/60 rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-xl border border-border/60"
         >
           <RegistrationHeader />
 
-          <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/2 flex flex-col m-auto items-center justify-center py-6">
-            <section className="gap-4 flex items-center">
-              <Avatar
-                seed={avatar}
-                className="size-16 sm:size-20 border border-muted-foreground/50 rounded-full shadow-2xl shrink-0"
-              />
+          <div className="w-full sm:w-4/5 md:w-full lg:w-4/5 flex flex-col mx-auto items-center justify-center py-6 sm:py-8">
+            <section className="gap-4 flex items-center justify-center">
+              <div className="relative">
+                <Avatar
+                  seed={avatar}
+                  className="size-16 sm:size-20 rounded-full ring-2 ring-primary/40 shadow-2xl shrink-0"
+                />
+              </div>
               <Button
                 size="sm"
                 type="button"
-                variant="secondary"
+                variant="outline"
                 onClick={() => setValue("avatar", crypto.randomUUID())}
-                className="gap-1.5"
+                className="gap-1.5 h-9 px-3 text-xs font-medium border-border/80 hover:bg-accent hover:text-foreground"
               >
                 <Dices className="size-4" /> Reroll
               </Button>
@@ -96,17 +98,21 @@ function RegisterPage() {
                 id="userName"
                 {...register("name")}
                 placeholder="What Should We Call You?"
-                className="h-10 text-sm"
+                className="h-11 sm:h-12 text-sm sm:text-base rounded-xl bg-background/60 border-border/80 focus:border-primary/80 transition-colors"
               />
               {errors.name && (
-                <p className="mt-2 text-start text-xs text-red-400">{errors.name.message}</p>
+                <p className="mt-2 text-start text-xs text-red-400 font-medium">{errors.name.message}</p>
               )}
             </section>
-            <Button className="mt-4 w-full h-10 font-medium" disabled={signUp.isPending}>
+
+            <Button
+              className="mt-4 w-full h-11 sm:h-12 text-sm sm:text-base font-semibold rounded-xl shadow-lg transition-all"
+              disabled={signUp.isPending}
+            >
               {signUp.isPending ? "Setting you up…" : "Let's Go"}
             </Button>
             {signUp.error && (
-              <p className="mt-2 text-start text-xs text-red-400">{signUp.error.message}</p>
+              <p className="mt-2 text-start text-xs text-red-400 font-medium">{signUp.error.message}</p>
             )}
           </div>
         </form>

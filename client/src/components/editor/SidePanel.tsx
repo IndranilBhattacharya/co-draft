@@ -48,7 +48,7 @@ export function SidePanel({ doc, myId, onClose }: Readonly<SidePanelProps>) {
   const visibleShortcuts = showAllShortcuts ? SHORTCUTS : SHORTCUTS.slice(0, 6);
 
   return (
-    <aside className="no-print flex h-full w-full lg:w-80 shrink-0 flex-col gap-5 overflow-y-auto overflow-x-hidden border-l border-border/60 bg-card/40 p-4 sm:p-5 text-sm backdrop-blur-md select-none">
+    <aside className="no-print flex h-full w-full lg:w-80 shrink-0 flex-col gap-5 overflow-y-auto overflow-x-hidden border-l border-border/60 bg-sidebar/95 lg:bg-card/40 p-4 sm:p-5 text-sm backdrop-blur-md select-none">
       {/* Mobile Close Bar */}
       {onClose && (
         <div className="flex items-center justify-between pb-2 border-b border-border/40 lg:hidden">

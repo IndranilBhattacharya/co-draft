@@ -9,14 +9,36 @@ const STOP_WORDS = new Set(
 const words = (text: string) =>
   (text.toLowerCase().match(/[\p{L}\p{N}']+/gu) ?? []).filter((word) => !STOP_WORDS.has(word));
 
-/** Shortens text to `max` characters without cutting a word in half. */
+/** Strips common markdown prefixes from a heading line before making it a title. */
+function cleanHeading(line: string) {
+  return line
+    .trim()
+    .replace(/^#{1,6}\s+/, "") // # Header
+    .replace(/^[-*+]\s+/, "") // - Bullet
+    .replace(/^>\s+/, "") // > Quote
+    .replace(/^\*\*([^*]+)\*\*$/, "$1") // **Bold Title**
+    .trim();
+}
+
+/** Shortens text to `max` characters cleanly without cutting abruptly or stripping everything. */
 function clip(text: string, max: number) {
   const clean = text.replace(/\s+/g, " ").trim();
-  return clean.length <= max ? clean : `${clean.slice(0, max).replace(/\s+\S*$/, "")}…`;
+  if (clean.length <= max) return clean;
+  // Try to break at a word boundary
+  const sliced = clean.slice(0, max);
+  const atWord = sliced.replace(/\s+\S*$/, "");
+  // If cutting at a word leaves a reasonable title (at least 25 chars or half of max), use it.
+  // Otherwise keep up to max characters so we don't reduce a line to a single word.
+  const result = atWord.length >= Math.min(25, Math.floor(max / 2)) ? atWord : sliced.trim();
+  return `${result}…`;
 }
 
 /** The first line that has text in it usually says what the draft is about. */
-export const suggestTitle = (text: string) => clip(text.split("\n").find((line) => line.trim()) ?? "Untitled", 60);
+export const suggestTitle = (text: string) => {
+  const firstLine = text.split("\n").find((line) => line.trim()) ?? "Untitled";
+  const cleaned = cleanHeading(firstLine) || firstLine.trim();
+  return clip(cleaned, 100);
+};
 
 /**
  * Picks the most important sentences of the draft.

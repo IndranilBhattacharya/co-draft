@@ -61,9 +61,9 @@ function RegisterPage() {
   });
 
   return (
-    <>
+    <main className="relative h-screen w-full overflow-hidden flex items-center justify-center">
       <BackgroundBeams />
-      <div className="z-10 absolute inset-y-[2.5vw] inset-x-[5vw] flex items-center text-center">
+      <div className="z-10 absolute inset-y-[2.5vh] inset-x-[5vw] flex items-center text-center">
         <LandingGreeting />
 
         <form
@@ -109,6 +109,6 @@ function RegisterPage() {
           </div>
         </form>
       </div>
-    </>
+    </main>
   );
 }

@@ -4,6 +4,7 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
+import { LoadingScreen } from "./components/ui/LoadingScreen";
 import "./index.css";
 import { routeTree } from "./routeTree.gen"; // generated from src/routes by the Vite plugin
 
@@ -14,6 +15,7 @@ const router = createRouter({
   context: { queryClient }, // available in every route's beforeLoad/loader
   defaultPreload: "intent", // hovering a link starts loading its route + data
   defaultPreloadStaleTime: 0, // let TanStack Query decide freshness, not the router
+  defaultPendingComponent: () => <LoadingScreen />,
 });
 
 // Makes <Link to="..."> and useParams fully type-safe across the app.

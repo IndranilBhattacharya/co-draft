@@ -15,7 +15,24 @@ export default defineConfig({
   resolve: {
     alias: { "@": path.resolve(import.meta.dirname, "./src") },
   },
-  // The editor route bundles Tiptap/ProseMirror + Yjs (~700 kB, ~215 kB gzipped). It is lazy-loaded,
-  // so only someone opening a draft downloads it. Vite warns above 500 kB; this is a known, accepted size.
-  build: { chunkSizeWarningLimit: 800 },
+  build: {
+    chunkSizeWarningLimit: 800,
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          if (
+            id.includes("@tiptap") ||
+            id.includes("prosemirror") ||
+            id.includes("yjs") ||
+            id.includes("y-protocols")
+          ) {
+            return "editor-vendor";
+          }
+          if (id.includes("@multiavatar")) {
+            return "avatar-vendor";
+          }
+        },
+      },
+    },
+  },
 });

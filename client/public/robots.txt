@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Allow: /register
+
+# Disallow indexing of private collaborative document rooms and invitation tokens
+Disallow: /documents/
+Disallow: /join/
+Disallow: /api/
+
+# Official Sitemap location for Google Search Console and crawlers
+Sitemap: https://codraft.indranildev.in/sitemap.xml

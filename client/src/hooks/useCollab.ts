@@ -35,6 +35,7 @@ export function useCollab(docId: string, userName: string) {
     const socket: Socket<ServerToClient, ClientToServer> = io(API_URL, {
       withCredentials: true, // send the session cookie with the handshake
       auth: { docId, clientId: ydoc.clientID },
+      transports: ["websocket", "polling"], // prioritize fast direct websockets
     });
     socketRef.current = socket;
     let synced = false;
@@ -85,6 +86,11 @@ export function useCollab(docId: string, userName: string) {
       ydoc.off("update", onDocUpdate);
       awareness.off("update", onAwarenessUpdate);
       socket.disconnect();
+      socketRef.current = null;
+      // Complete teardown of awareness and Yjs buffers to prevent document memory leaks
+      awareness.destroy();
+      ydoc.destroy();
+      useRoom.setState({ pointers: {}, people: [] });
     };
   }, [docId, userName, ydoc, awareness]);
 

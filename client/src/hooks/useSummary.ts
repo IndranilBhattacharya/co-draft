@@ -8,9 +8,26 @@ export function useSummary(docId: string) {
   const [summary, setSummary] = useState("");
 
   useEffect(() => {
+    if (!docId) return;
     const source = new EventSource(`${API_URL}/api/documents/${docId}/summary`, { withCredentials: true });
-    source.addEventListener("summary", (event) => setSummary(JSON.parse(event.data).summary));
-    return () => source.close();
+
+    const handleSummary = (event: MessageEvent) => {
+      try {
+        const parsed = JSON.parse(event.data);
+        if (parsed?.summary !== undefined) {
+          setSummary(parsed.summary);
+        }
+      } catch {
+        // Discard invalid JSON payloads
+      }
+    };
+
+    source.addEventListener("summary", handleSummary);
+
+    return () => {
+      source.removeEventListener("summary", handleSummary);
+      source.close();
+    };
   }, [docId]);
 
   return summary;

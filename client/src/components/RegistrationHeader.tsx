@@ -35,7 +35,7 @@ export default function RegistrationHeader() {
           </TooltipContent>
         </Tooltip>
       </header>
-      <p className="text-muted-foreground text-xs sm:text-sm mt-1">
+      <p className="text-muted-foreground text-xs mt-0.5">
         Pick your avatar, choose your name, and you're done.
       </p>
     </article>

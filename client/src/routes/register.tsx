@@ -132,7 +132,7 @@ function RegisterPage() {
 
           <div className="pt-4 border-t border-border/30 text-center">
             <span className="text-[11px] text-muted-foreground/60">
-              Session is securely tied to this browser. No password needed.
+              Session securely tied to this browser • No password required
             </span>
           </div>
         </form>

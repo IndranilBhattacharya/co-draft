@@ -9,7 +9,6 @@ import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 
 import { Avatar } from "@/components/Avatar";
-import LandingGreeting from "@/components/LandingGreeting";
 import RegistrationHeader from "@/components/RegistrationHeader";
 import { BackgroundBeams } from "@/components/ui/BackgroundBeams";
 import { Button } from "@/components/ui/button";
@@ -73,19 +72,36 @@ function RegisterPage() {
   });
 
   return (
-    <main className="relative min-h-dvh w-full overflow-y-auto flex items-center justify-center p-4 sm:p-6 md:p-8">
+    <main className="relative min-h-dvh w-full overflow-y-auto flex flex-col items-center justify-center p-4 sm:p-6 md:p-8">
       <BackgroundBeams />
-      <div className="z-10 relative flex flex-col md:flex-row items-stretch justify-center gap-6 sm:gap-8 md:gap-10 w-full max-w-5xl my-auto py-6 md:py-8">
-        <LandingGreeting />
 
+      <div className="z-10 relative flex flex-col items-center justify-center w-full max-w-lg my-auto py-8 sm:py-12">
+        {/* Brand Headline - Hero Sizing & Premium Ambience */}
+        <div className="flex flex-col items-center text-center mb-7 sm:mb-9 select-none">
+          <div className="relative inline-block">
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight">
+              <span className="bg-gradient-to-r from-gray-100 via-gray-200 to-gray-400 bg-clip-text text-transparent drop-shadow-sm">
+                Co
+              </span>
+              <span className="text-foreground">Draft</span>
+            </h1>
+            {/* Subtle Ambient Brand Glow */}
+            <div className="absolute -inset-x-8 -inset-y-3 rounded-full bg-gradient-to-r from-sky-500/15 via-indigo-500/10 to-purple-500/15 blur-2xl opacity-70 pointer-events-none -z-10" />
+          </div>
+          <p className="mt-3 text-sm sm:text-base text-muted-foreground/80 font-normal tracking-wide max-w-sm">
+            Instant peer collaboration. Zero clutter. Just draft and go.
+          </p>
+        </div>
+
+        {/* Polished Centered Registration Card */}
         <form
           onSubmit={handleSubmit((data) => signUp.mutate(data))}
-          className="p-6 sm:p-8 md:p-10 w-full md:w-1/2 flex flex-col justify-between bg-card/60 rounded-2xl sm:rounded-3xl shadow-2xl backdrop-blur-xl border border-border/60 transition-all"
+          className="p-6 sm:p-8 md:p-9 w-full flex flex-col justify-between bg-card/60 rounded-3xl shadow-2xl backdrop-blur-xl border border-border/60 transition-all"
         >
           <div>
             <RegistrationHeader />
 
-            <div className="w-full sm:w-4/5 md:w-full lg:w-4/5 flex flex-col mx-auto items-center justify-center py-6 sm:py-8">
+            <div className="w-full flex flex-col items-center justify-center pt-6 sm:pt-7 pb-2">
               <section className="gap-4 flex items-center justify-center">
                 <div className="relative">
                   <Avatar
@@ -98,13 +114,13 @@ function RegisterPage() {
                   type="button"
                   variant="outline"
                   onClick={() => setValue("avatar", crypto.randomUUID())}
-                  className="gap-1.5 h-9 px-3 text-xs font-medium border-border/80 hover:bg-accent hover:text-foreground cursor-pointer"
+                  className="gap-1.5 h-9 px-3.5 text-xs font-medium border-border/80 hover:bg-accent hover:text-foreground cursor-pointer rounded-xl transition-colors"
                 >
                   <Dices className="size-4" /> Reroll
                 </Button>
               </section>
 
-              <section className="mt-6 sm:mt-8 w-full">
+              <section className="mt-6 sm:mt-7 w-full">
                 <Input
                   autoFocus
                   type="text"
@@ -130,12 +146,19 @@ function RegisterPage() {
             </div>
           </div>
 
-          <div className="pt-4 border-t border-border/30 text-center">
+          <div className="pt-4 mt-2 border-t border-border/30 text-center">
             <span className="text-[11px] text-muted-foreground/60">
               Session securely tied to this browser • No password required
             </span>
           </div>
         </form>
+
+        {/* Global Footer Attribution */}
+        <div className="mt-6 text-center select-none">
+          <p className="text-[11px] text-muted-foreground/50">
+            © {new Date().getFullYear()} Indranil Bhattacharya • <span className="font-mono text-[10px] uppercase tracking-wider text-muted-foreground/40">Edge Ready v1.0</span>
+          </p>
+        </div>
       </div>
     </main>
   );
